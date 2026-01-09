@@ -1,0 +1,48 @@
+# Hello world!
+
+## Start
+
+Write something to build your own docs! 🎁
+
+import FileTree, { type FileNode } from "./FileTree";
+
+const tree: FileNode = {
+  name: "my-next-docs",
+  kind: "dir",
+  children: [
+    {
+      name: "app",
+      kind: "dir",
+      note: "Next.js App Router",
+      children: [
+        { name: "layout.tsx", kind: "file", note: "全局布局" },
+        { name: "page.tsx", kind: "file", note: "首页" },
+        {
+          name: "docs",
+          kind: "dir",
+          children: [
+            { name: "[...slug]", kind: "dir", children: [{ name: "page.tsx", kind: "file" }] },
+          ],
+        },
+      ],
+    },
+    {
+      name: "components",
+      kind: "dir",
+      children: [
+        { name: "FileTree.tsx", kind: "file" },
+        { name: "CodeBlock.tsx", kind: "file" },
+      ],
+    },
+    { name: "package.json", kind: "file" },
+    { name: "next.config.js", kind: "file" },
+  ],
+};
+
+export default function Demo() {
+  return (
+    <div style={{ padding: 16 }}>
+      <FileTree data={tree} basePath="" defaultExpandDepth={2} />
+    </div>
+  );
+}
