@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Strapi-like Header + Conditional Content</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel2: rgba(255, 255, 255, 0.08);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.72);
+        --line: rgba(255, 255, 255, 0.12);
+        --brand: #7c3aed;
+        --radius: 14px;
+        --max: 1100px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+          "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(
+            1200px 700px at 15% 10%,
+            rgba(124, 58, 237, 0.28),
+            transparent 55%
+          ),
+          radial-gradient(
+            900px 600px at 85% 25%,
+            rgba(59, 130, 246, 0.22),
+            transparent 50%
+          ),
+          var(--bg);
+        min-height: 100vh;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* ====== Header / Nav ====== */
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        background: rgba(11, 16, 32, 0.55);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .header-inner {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+      }
+
+      .logo-badge {
+        width: 26px;
+        height: 26px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--brand), #3b82f6);
+      }
+
+      .logo-title {
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+
+      .nav {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .nav a {
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        color: var(--muted);
+        transition: 0.15s ease;
+      }
+
+      .nav a:hover {
+        background: var(--panel);
+        border-color: var(--line);
+        color: var(--text);
+      }
+
+      .nav a.active {
+        background: rgba(124, 58, 237, 0.18);
+        border-color: rgba(124, 58, 237, 0.35);
+        color: var(--text);
+      }
+
+      /* ====== Page layout ====== */
+      .shell {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 22px 18px 60px;
+      }
+
+      .hero {
+        margin-top: 16px;
+        padding: 22px;
+        border-radius: var(--radius);
+        border: 1px solid var(--line);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06),
+          rgba(255, 255, 255, 0.04)
+        );
+      }
+
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: 26px;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      /* ====== Conditional Content Area ======
+         默认不显示；当有内容时才显示
+      */
+      .content-area {
+        display: none; /* 关键：默认隐藏 */
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: var(--radius);
+        border: 1px solid var(--line);
+        background: var(--panel2);
+        min-height: 360px; /* “下面的一大片区域”的感觉 */
+      }
+
+      .content-area.show {
+        display: block;
+      }
+
+      .content-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 14px;
+      }
+
+      .content-title {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .content-meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        padding: 14px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .card h3 {
+        margin: 0 0 6px;
+        font-size: 15px;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 13px;
+      }
+
+      @media (max-width: 900px) {
+        .cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        .cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 顶部导航 -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="logo" href="#home" aria-label="Go Home">
+          <span class="logo-badge" aria-hidden="true"></span>
+          <span class="logo-title">My Strapi-like</span>
+        </a>
+
+        <nav class="nav" id="nav">
+          <!-- data-route: 对应 hash 路由 key -->
+          <a href="#home" data-route="home">首页</a>
+          <a href="#docs" data-route="docs">Docs</a>
+          <a href="#plugins" data-route="plugins">Plugins</a>
+
+          <!-- 这个“空页面”代表没有链接内容：点击后下面区域不显示 -->
+          <a href="#empty" data-route="empty">空链接</a>
+
+          <a href="#pricing" data-route="pricing">Pricing</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell">
+      <!-- Strapi 风格：上方可以是首页大块内容 -->
+      <section class="hero">
+        <h1>一个“导航驱动内容显示/隐藏”的页面骨架</h1>
+        <p>
+          行为：点击导航。如果该链接有页面内容，则显示下面的内容大区域；如果没有页面内容（或回到首页），则不显示内容区域。
+        </p>
+      </section>
+
+      <!-- 下面这块就是你说的“一大片区域”，默认不显示 -->
+      <section class="content-area" id="contentArea" aria-live="polite">
+        <div class="content-header">
+          <div class="content-title" id="contentTitle">Title</div>
+          <div class="content-meta" id="contentMeta">Meta</div>
+        </div>
+
+        <div id="contentBody"></div>
+      </section>
+    </main>
+
+    <script>
+      /**
+       * 这里模拟“有内容的页面”与“无内容页面”：
+       * - home: 认为是首页 -> 不显示 contentArea
+       * - empty: 明确没有内容 -> 不显示 contentArea
+       * - 其他: 有内容 -> 显示 contentArea，并渲染对应内容
+       */
+      const PAGES = {
+        docs: {
+          title: "Docs",
+          meta: "最后更新：2026-01-19",
+          render() {
+            return `
+              <div class="cards">
+                <div class="card">
+                  <h3>快速开始</h3>
+                  <p>安装、创建项目、运行开发环境。</p>
+                </div>
+                <div class="card">
+                  <h3>内容类型</h3>
+                  <p>Collection Type / Single Type 的建模思路。</p>
+                </div>
+                <div class="card">
+                  <h3>权限与角色</h3>
+                  <p>RBAC、Public/Authenticated 权限策略。</p>
+                </div>
+              </div>
+            `;
+          },
+        },
+        plugins: {
+          title: "Plugins",
+          meta: "精选插件与生态能力",
+          render() {
+            return `
+              <div class="cards">
+                <div class="card">
+                  <h3>Upload</h3>
+                  <p>文件上传与媒体库管理。</p>
+                </div>
+                <div class="card">
+                  <h3>i18n</h3>
+                  <p>多语言内容管理与本地化。</p>
+                </div>
+                <div class="card">
+                  <h3>GraphQL</h3>
+                  <p>以 GraphQL 的方式对外暴露 API。</p>
+                </div>
+              </div>
+            `;
+          },
+        },
+        pricing: {
+          title: "Pricing",
+          meta: "示例：展示定价卡片",
+          render() {
+            return `
+              <div class="cards">
+                <div class="card">
+                  <h3>Community</h3>
+                  <p>适合个人与学习项目，基础能力可用。</p>
+                </div>
+                <div class="card">
+                  <h3>Pro</h3>
+                  <p>适合团队协作，包含更多管理能力。</p>
+                </div>
+                <div class="card">
+                  <h3>Enterprise</h3>
+                  <p>适合大型组织，提供更强的治理与支持。</p>
+                </div>
+              </div>
+            `;
+          },
+        },
+      };
+
+      const contentArea = document.getElementById("contentArea");
+      const contentTitle = document.getElementById("contentTitle");
+      const contentMeta = document.getElementById("contentMeta");
+      const contentBody = document.getElementById("contentBody");
+      const nav = document.getElementById("nav");
+      const navLinks = nav.querySelectorAll("a[data-route]");
+      let hideTimer = null;
+
+      function setActive(route) {
+        // 给导航高亮 active
+        const links = nav.querySelectorAll("a[data-route]");
+        links.forEach((a) => {
+          a.classList.toggle("active", a.dataset.route === route);
+        });
+      }
+
+      function showPage(route) {
+        // 首页或空链接：下面大区域不显示
+        if (route === "home" || route === "empty" || !PAGES[route]) {
+          contentArea.classList.remove("show");
+          contentTitle.textContent = "";
+          contentMeta.textContent = "";
+          contentBody.innerHTML = "";
+          return;
+        }
+
+        // 有内容页面：显示下面区域并渲染
+        const page = PAGES[route];
+        contentTitle.textContent = page.title;
+        contentMeta.textContent = page.meta;
+        contentBody.innerHTML = page.render();
+        contentArea.classList.add("show");
+      }
+
+      function getRouteFromHash() {
+        // location.hash 形如 "#docs"
+        const raw = window.location.hash.replace("#", "");
+        return raw || "home";
+      }
+
+      function render() {
+        const route = getRouteFromHash();
+        setActive(route);
+        showPage(route);
+      }
+
+      function clearHideTimer() {
+        if (hideTimer) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+      }
+
+      function scheduleHide() {
+        clearHideTimer();
+        hideTimer = setTimeout(() => {
+          contentArea.classList.remove("show");
+          contentTitle.textContent = "";
+          contentMeta.textContent = "";
+          contentBody.innerHTML = "";
+          setActive(getRouteFromHash());
+        }, 80);
+      }
+
+      navLinks.forEach((link) => {
+        link.addEventListener("mouseenter", () => {
+          const route = link.dataset.route;
+          clearHideTimer();
+          setActive(route);
+          showPage(route);
+        });
+
+        link.addEventListener("mouseleave", (event) => {
+          const next = event.relatedTarget;
+          if (next && (nav.contains(next) || contentArea.contains(next))) {
+            return;
+          }
+          scheduleHide();
+        });
+      });
+
+      contentArea.addEventListener("mouseenter", () => {
+        clearHideTimer();
+      });
+
+      contentArea.addEventListener("mouseleave", (event) => {
+        const next = event.relatedTarget;
+        if (next && nav.contains(next)) {
+          return;
+        }
+        scheduleHide();
+      });
+
+      // hash 路由变化时刷新视图
+      window.addEventListener("hashchange", render);
+
+      // 首次进入渲染
+      render();
+    </script>
+  </body>
+</html>
