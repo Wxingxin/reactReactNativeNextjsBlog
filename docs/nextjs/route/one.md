@@ -1,4 +1,3 @@
-
 # 1）声明式导航：`<Link />`（首选）
 
 ## 1.1 基础跳转
@@ -6,7 +5,7 @@
 ```tsx
 import Link from "next/link";
 
-<Link href="/dashboard">去控制台</Link>
+<Link href="/dashboard">去控制台</Link>;
 ```
 
 ## 1.2 动态路由
@@ -28,16 +27,20 @@ import Link from "next/link";
 默认跳转会滚到顶部。想保留滚动位置（比如列表→弹窗/筛选）：
 
 ```tsx
-<Link href="/photos/1" scroll={false}>打开</Link>
+<Link href="/photos/1" scroll={false}>
+  打开
+</Link>
 ```
 
 ## 1.5 预取（prefetch）
 
-* Next 会对可见的 Link 自动预取（有条件）
-* 你也可以手动：
+- Next 会对可见的 Link 自动预取（有条件）
+- 你也可以手动：
 
 ```tsx
-<Link href="/pricing" prefetch>Pricing</Link>
+<Link href="/pricing" prefetch>
+  Pricing
+</Link>
 ```
 
 > 实战建议：重要入口页可开启；大量列表项不建议强制 prefetch（可能浪费带宽）。
@@ -69,8 +72,8 @@ export default function Actions() {
 
 ## 2.1 `push` vs `replace` 怎么选？
 
-* `push()`：保留历史记录（正常跳转）
-* `replace()`：不保留历史（登录页跳首页、表单向导纠错页）
+- `push()`：保留历史记录（正常跳转）
+- `replace()`：不保留历史（登录页跳首页、表单向导纠错页）
 
 ---
 
@@ -109,8 +112,8 @@ export default async function Post({ params }: { params: { id: string } }) {
 
 配合：
 
-* `app/not-found.tsx`（全局 404）
-* 或 `app/posts/not-found.tsx`（局部 404）
+- `app/not-found.tsx`（全局 404）
+- 或 `app/posts/not-found.tsx`（局部 404）
 
 ---
 
@@ -133,7 +136,10 @@ export function Nav() {
 
   return (
     <nav>
-      <Link href="/dashboard" aria-current={isActive("/dashboard") ? "page" : undefined}>
+      <Link
+        href="/dashboard"
+        aria-current={isActive("/dashboard") ? "page" : undefined}
+      >
         Dashboard
       </Link>
     </nav>
@@ -200,8 +206,8 @@ export function Pager() {
 
 当你做了：
 
-* Server Action 更新数据
-* 或客户端发请求改了数据
+- Server Action 更新数据
+- 或客户端发请求改了数据
 
 你想让当前页面的 Server Components 重新拉取：
 
