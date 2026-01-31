@@ -126,11 +126,7 @@ export default function AboutPage() {
             const isCorrect = submitted ? userChoice === q.answer : null;
 
             return (
-              <div
-                key={q.id}
-                className={styles.card}
-                style={{ "--i": index }}
-              >
+              <div key={q.id} className={styles.card} style={{ "--i": index }}>
                 <div className={styles.titleRow}>
                   <div className={styles.questionTitle}>{q.title}</div>
 
@@ -225,9 +221,7 @@ export default function AboutPage() {
                 清空重做
               </button>
               {!allAnswered && (
-                <span className={styles.hint}>
-                  请先完成全部题目后再提交
-                </span>
+                <span className={styles.hint}>请先完成全部题目后再提交</span>
               )}
             </>
           ) : (
